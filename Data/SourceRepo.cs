@@ -59,6 +59,9 @@ namespace SticksAndStonesGCApi.Data
 
             var encodedName = Uri.EscapeDataString(courseName ?? string.Empty);
 
+            SourceData result = new SourceData();
+            List<SourceData> resultsList = new List<SourceData>();
+
             request.RequestUri = new Uri($"https://golf-course-api.p.rapidapi.com/search?name={encodedName}");
             request.Method = HttpMethod.Get;
             request.Headers.Add("x-rapidapi-key", sourceApiKey);
@@ -86,8 +89,16 @@ namespace SticksAndStonesGCApi.Data
                 PropertyNameCaseInsensitive = true
             };
 
-            var resultsList = System.Text.Json.JsonSerializer.Deserialize<List<SourceData>>(body, options) ?? new List<SourceData>();
-            SourceData result = resultsList.FirstOrDefault() ?? new SourceData();
+            if (body.Contains("message"))
+            {
+                result = System.Text.Json.JsonSerializer.Deserialize<SourceData>(body, options) ?? new SourceData();
+
+            }
+            else
+            {
+                resultsList = System.Text.Json.JsonSerializer.Deserialize<List<SourceData>>(body, options) ?? new List<SourceData>();
+                result = resultsList.FirstOrDefault() ?? new SourceData();
+            }
 
             // persist to cache
             _logger.LogInformation("Saving course data for {CourseName} to cache.", courseName);

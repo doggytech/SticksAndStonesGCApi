@@ -49,6 +49,7 @@ namespace SticksAndStonesGCApi.Models
 
         [JsonPropertyName("__v")]
         public int Version { get; set; }
+        public string? message { get; set; }
     }
 
     public class ScorecardItem
