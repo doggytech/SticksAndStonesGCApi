@@ -1,0 +1,6 @@
+@SticksAndStonesGCApi_HostAddress = http://localhost:5082
+
+GET {{SticksAndStonesGCApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
