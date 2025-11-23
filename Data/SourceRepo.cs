@@ -11,11 +11,15 @@ namespace SticksAndStonesGCApi.Data
     {
         private readonly LocalCache _cache;
         private readonly ILogger<SourceRepo> _logger;
+        private readonly string _sourceApiKey;
+        private readonly string _sourceDomain;
 
-        public SourceRepo(LocalCache cache, ILogger<SourceRepo> logger)
+        public SourceRepo(LocalCache cache, ILogger<SourceRepo> logger, IConfiguration configuration)
         {
             _cache = cache;
             _logger = logger;
+            _sourceApiKey = configuration["SourceData:SOURCE_API_KEY"] ?? "";
+            _sourceDomain = configuration["SourceData:SOURCE_API_HOST"] ?? "";
         }
 
         public async Task<List<SourceData>> GetDataFromSourceAsync()
@@ -48,9 +52,10 @@ namespace SticksAndStonesGCApi.Data
             var response = new HttpResponseMessage();
             var client = new HttpClient();
             var request = new HttpRequestMessage();
+            string env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "";
 
-            string sourceApiKey = Environment.GetEnvironmentVariable("SOURCE_API_KEY") ?? "";
-            string sourceApiHost = Environment.GetEnvironmentVariable("SOURCE_API_HOST") ?? "";
+            string sourceApiKey = Environment.GetEnvironmentVariable("SOURCE_API_KEY") ?? _sourceApiKey;
+            string sourceApiHost = Environment.GetEnvironmentVariable("SOURCE_API_HOST") ?? _sourceDomain;
 
             var encodedName = Uri.EscapeDataString(courseName ?? string.Empty);
 
